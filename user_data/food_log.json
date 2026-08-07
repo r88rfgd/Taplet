@@ -1,0 +1,37 @@
+[
+  {
+    "id": "5e86cde5-2bc9-4eed-8269-fdb636d588dc",
+    "timestamp": "2026-08-07T14:21:29.222054",
+    "image": "/user_data/food_images/96b225e38fe74d668694ed5b8217f36f.jpg",
+    "calories": 0,
+    "risks": [
+      "plastic",
+      "bottle"
+    ],
+    "description": "A bottle of water; no food present, potential plastic ingestion risk."
+  },
+  {
+    "id": "dc0e08db-f48c-4657-8a3c-030f56f65ea2",
+    "timestamp": "2026-08-07T14:55:25.740205",
+    "image": "/user_data/food_images/800af38a1f8b4581a554dd557ae19b20.jpg",
+    "calories": 800,
+    "risks": [
+      "gluten",
+      "tomato",
+      "pepperoni",
+      "cheese"
+    ],
+    "description": "A deep-dish pizza with tomato sauce, cheese, and herbs; gluten is a potential risk."
+  },
+  {
+    "id": "c1ea5169-48cd-4191-b6b1-bb79ded29fda",
+    "timestamp": "2026-08-07T14:59:23.868786",
+    "image": "/user_data/food_images/0be8910123af45e491adf36b82958934.jpg",
+    "calories": 500,
+    "risks": [
+      "gluten",
+      "peanut"
+    ],
+    "description": "Honey Dijon Salmon with potatoes and peas; may contain gluten or peanuts."
+  }
+]

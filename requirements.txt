@@ -1,0 +1,8 @@
+flask
+flask-cors
+ollama
+tavily-python
+requests
+pillow
+python-dotenv
+opencv-python-headless
