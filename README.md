@@ -160,7 +160,9 @@ https://github.com/user-attachments/assets/4ff31cd7-31d3-4c47-8229-deb2fbbe5c79
 # Setup & Installation
 
 This guide covers the setup required to run the TAPLET backend, local AI models, and React Native / Expo frontend.
+
 Apk is in the Repo & Releases
+
 ## 1. Prerequisites
 
 Make sure the following are installed:
