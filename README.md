@@ -374,10 +374,10 @@ npm run ios
 - [x] Add one mid‑level feature (e.g., dashboard analytics, notifications, or role-based access).
 - [x] `App.js`
 - [x] We already had dashboard analytics
-- [x] Line 7 — import of notification/PDF/share libs
-- [x] Line 99 — notification config + permission effect
-- [x] Line 112 — matched-allergy push notification effect
-- [x] Line 161 — `shareScanPdf` PDF export/share function
+- [x] Line 11 — import of notification/PDF/share libs
+- [x] Line 103 — notification config + permission effect
+- [x] Line 133 — matched-allergy push notification effect
+- [x] Line 184 — `shareScanPdf` PDF export/share function
 
 ————————————————————————————————————
 
