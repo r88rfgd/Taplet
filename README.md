@@ -340,8 +340,8 @@ npm run ios
 
 - [x] 2. **UI Enhancements**
 - [x] Refine the interface with cleaner layouts and responsive design.
-- [x] Line 143: PDF "open" button now shows only the 📂 icon (no text)
-- [x] Line 133: Bounty comment — Documents upload screen: PDFs now open on tap (whole card calls `Linking.openURL`)
+- [x] Line 143: PDF "open" button now shows only the 📂 icon (no text) `Taplet/src/screens/SecondaryScreens.js`
+- [x] Line 133: Bounty comment — Documents upload screen: PDFs now open on tap (whole card calls `Linking.openURL`,`Taplet/src/screens/SecondaryScreens.js`)
 - [x] Line 62-67: Bounty comment + Export button now shows only the 🔗 share icon (no text)
 - [x] `Taplet/src/screens/HomeScreen.js`
 - [x] Line 56-58: Bounty comment + Open Map button now shows only the 📍 pin icon (no text)
