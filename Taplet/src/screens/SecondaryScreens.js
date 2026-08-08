@@ -114,7 +114,10 @@ export function DocsScreen({ c }) {
       const fd = new FormData();
       fd.append('file', { uri: f.uri, name: f.name, type: f.mimeType || 'application/octet-stream' });
       fd.append('name', f.name);
-      await fetch(`${API_BASE_URL}/api/v1/documents`, { method: 'POST', body: fd, headers: { 'Content-Type': 'multipart/form-data' } });
+      // Bounty 1 *Bug Fix & Stability*
+      //removed headers: { 'Content-Type': 'multipart/form-data' } Setting it manually can strip the boundary and cause
+      // Flask's request.files to be empty.
+      await fetch(`${API_BASE_URL}/api/v1/documents`, { method: 'POST', body: fd});
       await load();
     } catch (e) { Alert.alert('Upload failed', String(e)); }
     finally { setBusy(false); }
@@ -127,14 +130,20 @@ export function DocsScreen({ c }) {
         <Text style={s.btnText}>{busy ? 'UPLOADING…' : '+ UPLOAD'}</Text>
       </TouchableOpacity>
       {docs.length === 0 && <Text style={[s.bodyText, { marginTop: 12 }]}>No documents yet.</Text>}
+      {/* #bounty - [ ] 2. UI Enhancements — Refine interface with cleaner layouts and responsive design. PDFs now open on tap. */}
       {docs.map((d) => (
-        <View key={d.id} style={s.card}>
+        <TouchableOpacity key={d.id} style={s.card} onPress={() => { if (d.url) Linking.openURL(`${API_BASE_URL}${d.url}`); }}>
           <View style={s.heroRow}>
             <Text style={s.cardHdr}>📄 {d.name}</Text>
             <Text style={{ color: c.subText, fontSize: 11 }}>{d.type}</Text>
           </View>
           {d.type !== '.pdf' && <Image source={{ uri: `${API_BASE_URL}${d.url}` }} style={s.docThumb} resizeMode="cover" />}
-        </View>
+          {d.type === '.pdf' && (
+            <View style={[s.btn, s.btnPrimary, { marginTop: 8 }]}>
+              <Text style={s.btnText}>📂</Text>
+            </View>
+          )}
+        </TouchableOpacity>
       ))}
     </ScrollView>
   );

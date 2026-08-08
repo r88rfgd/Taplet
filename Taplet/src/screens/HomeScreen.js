@@ -6,7 +6,8 @@ import { makeStyles } from '../styles';
 import { riskColor, sortByRisk, daysUntil, API_BASE_URL } from '../theme';
 import { RiskRing, RiskBar, WeatherCard, ScanMap } from '../components';
 
-export function HomeScreen({ c, loading, data, medicines, allergyMatches, matchLoading, onToggleRiskExpand, riskExpanded, onOpenImage, onPickCoordinate }) {
+// #Bounty 7 - Feature Expansion: accept onSharePdf prop for scan export/share
+export function HomeScreen({ c, loading, data, medicines, allergyMatches, matchLoading, onToggleRiskExpand, riskExpanded, onOpenImage, onPickCoordinate, onSharePdf }) {
   const s = makeStyles(c);
   const gemma = data?.gemma_allergy_assessment || {};
   const meteo = data?.open_meteo_data?.summary || {};
@@ -52,9 +53,20 @@ export function HomeScreen({ c, loading, data, medicines, allergyMatches, matchL
           </View>
         </View>
         {data?.metadata?.cached && <Text style={s.cached}>⚡ CACHE</Text>}
+        {/* #bounty - [ ] 2. UI Enhancements
+            - [ ] Refine the interface with cleaner layouts and responsive design.
+            (Open map button changed to a pin icon.) */}
         <TouchableOpacity style={[s.btn, s.btnPrimary, { marginTop: 10 }]} onPress={() => { setPicked(null); setMapModal(true); }}>
-          <Text style={s.btnText}>🗺 OPEN MAP PICKER</Text>
+          <Text style={s.btnText}>📍</Text>
         </TouchableOpacity>
+        {/* #bounty - [ ] 2. UI Enhancements
+            - [ ] Refine the interface with cleaner layouts and responsive design.
+            (Export button changed to a share icon.) */}
+        {data && (
+          <TouchableOpacity style={[s.btn, { marginTop: 8, backgroundColor: c.accent }]} onPress={() => onSharePdf && onSharePdf()}>
+            <Text style={[s.btnText, { color: c.accentText }]}>🔗</Text>
+          </TouchableOpacity>
+        )}
       </TouchableOpacity>
 
       {/* Map with blue target dot + capped pins */}

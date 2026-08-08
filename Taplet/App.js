@@ -1,9 +1,17 @@
 // App.js — TAPLET (brutalist / minimalist entry point)
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
-  SafeAreaView, StatusBar, View, Text, TouchableOpacity, TextInput, Modal, Image, Alert, Platform,
+  SafeAreaView, StatusBar, View, Text, TouchableOpacity, TextInput, Modal, Image, Alert, Platform, LogBox,
 } from 'react-native';
+
+// Suppress the expo-notifications deprecation/compat warnings so they don't
+// surface in the app's dev error overlay.
+LogBox.ignoreLogs(['expo-notifications']);
 import * as Location from 'expo-location';
+// #Bounty 7 - Feature Expansion: pull in notification + PDF/share libs
+import * as Notifications from 'expo-notifications';
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
 import { THEMES, API_BASE_URL, riskColor } from './src/theme';
 import { makeStyles } from './src/styles';
 import { HomeScreen } from './src/screens/HomeScreen';
@@ -92,6 +100,53 @@ export default function App() {
     if (data) runAllergyMatch(data);
   }, [data, allergies, runAllergyMatch]);
 
+  // #Bounty 7 - Feature Expansion: configure notifications + watch for matches
+  useEffect(() => {
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({ 
+        shouldShowBanner: true, 
+        shouldShowList: true, 
+        shouldPlaySound: true, 
+        shouldSetBadge: false 
+      }),
+    });
+
+    (async () => {
+      // 1. Android MUST have a notification channel set BEFORE requesting permissions
+      if (Platform.OS === 'android') {
+        await Notifications.setNotificationChannelAsync('default', {
+          name: 'Alerts',
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: '#FF231F7C',
+        });
+      }
+
+      // 2. Now it is safe to request permissions
+      const { status } = await Notifications.getPermissionsAsync();
+      if (status !== 'granted') {
+        await Notifications.requestPermissionsAsync();
+      }
+    })();
+  }, []);
+
+  // #Bounty 7 - Feature Expansion: when a matched allergy is RAISED, fire a push notification
+  useEffect(() => {
+    const matches = allergyMatches?.matches || [];
+    const raised = matches.filter((m) => m.detected);
+    if (raised.length === 0) return;
+    const names = raised.map((m) => m.allergy).join(', ');
+    Notifications.scheduleNotificationAsync({
+      content: {
+        title: '⚠ Allergy Alert',
+        body: `Detected: ${names}. Take care in this area.`,
+        // route through the Android channel we created so it actually shows
+        ...(Platform.OS === 'android' ? { channelId: 'default' } : {}),
+      },
+      trigger: null,
+    }).catch(() => {});
+  }, [allergyMatches]);
+
   const scan = useCallback(async (useGps) => {
     let la = lat, lo = lon;
     if (useGps) {
@@ -126,6 +181,46 @@ export default function App() {
     setLon(lo);
   }, []);
 
+  // #Bounty 7 - Feature Expansion: build an HTML summary of the current scan and export/share it as a PDF
+  const shareScanPdf = useCallback(async () => {
+    if (!data) { Alert.alert('No scan yet', 'Run a scan first.'); return; }
+    const gemma = data?.gemma_allergy_assessment || {};
+    const meteo = data?.open_meteo_data?.summary || {};
+    const matches = allergyMatches?.matches || [];
+    const plants = gemma.top_plants || [];
+    const rows = (arr, fn) => arr.map(fn).join('');
+    const html = `
+      <html><head><meta charset="utf-8"><style>
+        body{font-family:Helvetica,Arial,sans-serif;padding:24px;color:#111}
+        h1{font-size:22px;margin:0 0 4px} h2{font-size:16px;border-bottom:2px solid #111;margin-top:18px}
+        .sub{color:#666;font-size:12px;margin-bottom:8px}
+        .row{padding:6px 0;border-bottom:1px solid #eee;font-size:13px}
+        .badge{font-weight:bold}
+      </style></head><body>
+        <h1>TAPLET Scan Report</h1>
+        <div class="sub">Lat ${lat} · Lon ${lon} · Generated ${new Date().toLocaleString()}</div>
+        <h2>Overall Risk</h2>
+        <div class="row">Score: ${gemma.overall_risk_score ?? '--'} / Level: ${gemma.overall_risk_level || 'HIGH'}</div>
+        <div class="row">Drivers: ${(gemma.primary_risk_drivers || []).join(', ') || '—'}</div>
+        <h2>Weather</h2>
+        <div class="row">Temp ${meteo.temperature_c ?? '--'}°C · Humidity ${meteo.humidity_pct ?? '--'}% · Wind ${meteo.wind_speed_kmh ?? '--'} km/h</div>
+        <h2>My Allergies Matched</h2>
+        ${matches.length === 0 ? '<div class="row">None</div>' : rows(matches, (m) => `<div class="row"><span class="badge">${m.allergy}</span> — ${m.detected ? 'RAISED (' + (m.severity || '') + ')' : 'clear'}</div>`)}
+        <h2>Top Plants</h2>
+        ${plants.length === 0 ? '<div class="row">None</div>' : rows(plants, (p) => `<div class="row"><span class="badge">${p.plant}</span> — ${p.pollen_level || '—'} · ${(p.allergies_triggered || []).join(', ') || '—'}</div>`)}
+      </body></html>`;
+    try {
+      const { uri } = await Print.printToFileAsync({ html });
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri, { mimeType: 'application/pdf', dialogTitle: 'Share Scan PDF' });
+      } else {
+        Alert.alert('Sharing not available on this device');
+      }
+    } catch (e) {
+      Alert.alert('PDF export failed', String(e));
+    }
+  }, [data, allergyMatches, lat, lon]);
+
   const imgUri = selImg?.image_url ? `${API_BASE_URL}${selImg.image_url}` : null;
 
   return (
@@ -157,7 +252,7 @@ export default function App() {
         </View>
       </View>
 
-      {tab === 'home' && <HomeScreen c={c} loading={loading} data={data} medicines={medicines} allergyMatches={allergyMatches} matchLoading={matchLoading} onToggleRiskExpand={() => setRiskExpanded(!riskExpanded)} riskExpanded={riskExpanded} onOpenImage={setSelImg} onPickCoordinate={applyPicked} />}
+      {tab === 'home' && <HomeScreen c={c} loading={loading} data={data} medicines={medicines} allergyMatches={allergyMatches} matchLoading={matchLoading} onToggleRiskExpand={() => setRiskExpanded(!riskExpanded)} riskExpanded={riskExpanded} onOpenImage={setSelImg} onPickCoordinate={applyPicked} onSharePdf={shareScanPdf} />}
       {tab === 'meds' && <MedsScreen c={c} />}
       {tab === 'docs' && <DocsScreen c={c} />}
       {tab === 'food' && <FoodScreen c={c} />}
