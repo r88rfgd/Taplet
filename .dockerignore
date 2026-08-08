@@ -1,0 +1,32 @@
+# Version control
+.git
+.gitignore
+
+# Local environment / secrets
+.env
+.env.example
+
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+
+# Heavy application data / caches
+assessment_cache/
+coverage_cache/
+mapillary_*/
+user_data/
+user_data/documents/
+user_data/food_images/
+
+# Tests
+test.py
+test-core.py
+
+# Frontend (React Native app, not needed in backend container)
+Taplet/
+
+# Misc
+Dockerfile
+.dockerignore
+README.md

@@ -1,3 +1,8 @@
+# [DATA INTEGRATION LAYER]: Mapillary Graph API Connection
+    # Connects the project to Meta's live Mapillary database to dynamically 
+    # update the application with recent street-level imagery, bounding boxes, 
+    # and map coverage vectors for the requested location.
+
 import requests
 import math
 import json

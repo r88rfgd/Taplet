@@ -1,31 +1,7 @@
-"""
-open_meteo_client.py
-=====================
-Robust client for the Open-Meteo Forecast API + Air Quality API.
-
-No API key required (non-commercial use). Docs:
-  - Weather Forecast API : https://open-meteo.com/en/docs
-  - Air Quality API      : https://open-meteo.com/en/docs/air-quality-api
-
-Given a latitude/longitude, `get_environmental_data()` returns a single
-consolidated dict with:
-  - location metadata (resolved lat/lon, elevation, timezone)
-  - current conditions (temperature, humidity, wind speed/dir/gusts,
-    precipitation, cloud cover, pressure, UV index, weather code)
-  - daily forecast summary (temp min/max, precip sum, wind max, sunrise/set)
-  - hourly forecast (temperature, humidity, wind, precipitation probability)
-  - air quality (PM10, PM2.5, CO, NO2, SO2, O3, dust, European & US AQI)
-  - pollen (alder, birch, grass, mugwort, olive, ragweed) -- Europe only,
-    values are `None` outside the CAMS European domain.
-
-Design notes:
-  - Uses a requests.Session with urllib3 Retry (exponential backoff) for
-    transient network / 5xx errors.
-  - Each sub-request (weather, air quality) is isolated: if one endpoint
-    fails, the other's data is still returned, with an "errors" key
-    describing what went wrong.
-  - Pure standard-lib + requests, no other dependencies.
-"""
+# [DATA INTEGRATION LAYER]: Open-Meteo API Connection
+# Connects to live meteorological datasets to fetch dynamic updates for
+# real-time weather conditions, 7-day forecasts, and live air quality 
+# indexes (including PM2.5 and European CAMS pollen domains).
 
 from __future__ import annotations
 

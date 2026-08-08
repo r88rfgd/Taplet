@@ -1,31 +1,7 @@
-"""
-gbif_client.py
-================
-Robust client for the GBIF (Global Biodiversity Information Facility)
-Occurrence Search API.
-
-No API key required for search (only downloads need auth). Docs:
-  - Occurrence search : https://techdocs.gbif.org/en/openapi/v1/occurrence
-  - API conventions   : https://techdocs.gbif.org/en/data-use/api-sql-download-functions
-  - geoDistance filter: "<lat>,<lon>,<radius><unit>" e.g. "52.52,13.41,25km"
-                         (same predicate used by GBIF_GeoDistance in SQL downloads)
-
-Given a latitude/longitude, `get_local_plant_species()` restricts the
-search space to species (kingdom = Plantae, kingdomKey = 6 in the GBIF
-backbone taxonomy) that have actually been *recorded* within a radius of
-that point -- i.e. real, locally-observed flora rather than a generic
-range map.
-
-Design notes:
-  - requests.Session + urllib3 Retry for transient network / 5xx errors.
-  - Paginates through /occurrence/search (max 300 records/page) until
-    `max_records` is hit or GBIF reports endOfRecords.
-  - Deduplicates by taxonKey, aggregates occurrence counts, keeps
-    vernacular/common name + family + basis of record + last seen date.
-  - hasCoordinate=true & hasGeospatialIssue=false to avoid bad records.
-  - Never raises for a single failed page -- partial results are still
-    returned with an "errors" list describing what happened.
-"""
+# [DATA INTEGRATION LAYER]: GBIF API Connection
+# Dynamically queries the live Global Biodiversity Information Facility dataset
+# to retrieve real-time, locally recorded plant and pollen occurrences based on
+# the user's dynamic GPS coordinates.
 
 from __future__ import annotations
 
