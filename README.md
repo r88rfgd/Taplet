@@ -160,7 +160,6 @@ https://github.com/user-attachments/assets/4ff31cd7-31d3-4c47-8229-deb2fbbe5c79
 # Setup & Installation
 
 This guide covers the setup required to run the TAPLET backend, local AI models, and React Native / Expo frontend.
-apk is provided in the repo
 
 ## 1. Prerequisites
 
@@ -330,63 +329,71 @@ npm run ios
 
 ## Implementation Tracking List
 
-Here is the verified implementation tracking list with the corrected line numbers and details based on the provided backend source code files.
+- [x] 1. **Bug Fix & Stability**
+- [x] Resolve minor bugs and improve system stability for smoother user experience.
+- [x] `Taplet/src/screens/SecondaryScreens.js` — relevant section starts around line 117
 
-### Frontend & UI Enhancements (From Provided Notes)
 
-Please note: The frontend JavaScript/React Native files were not included in the provided source code, so these retain your original noted line numbers.
+————————————————————————————————————
 
-**1. Bug Fix & Stability**
+- [x] 2. **UI Enhancements**
+- [x] Refine the interface with cleaner layouts and responsive design.
+- [x] Line 143: PDF "open" button now shows only the 📂 icon (no text)
+- [x] Line 133: Bounty comment — Documents upload screen: PDFs now open on tap (whole card calls `Linking.openURL`)
+- [x] Line 62-67: Bounty comment + Export button now shows only the 🔗 share icon (no text)
+- [x] `Taplet/src/screens/HomeScreen.js`
+- [x] Line 56-58: Bounty comment + Open Map button now shows only the 📍 pin icon (no text)
 
-- `Taplet/src/screens/SecondaryScreens.js`: Line 143 (PDF "open" button shows only 📂 icon), Line 133 (PDFs open on tap via `Linking.openURL`), Lines 62-67 (Export button shows only 🔗 share icon).
+————————————————————————————————————
 
-**2. UI Enhancements**
+- [x] 3. **Documentation Update**
+- [x] Write clear setup guides, usage instructions, and API references.
+- [x] README.md file changes at the end
 
-- `Taplet/src/screens/HomeScreen.js`: Lines 56-58 (Open Map button shows only 📍 pin icon).
+————————————————————————————————————
 
-**3. Documentation Update**
+- [x] 4. **Basic Testing Suite**
+- [x] Implement unit tests to validate core functionality and prevent regressions.
+- [x] Added a separate `test-core.py` file
 
-- `README.md`: File changes at the end.
+————————————————————————————————————
 
-**7. Feature Expansion**
+- [x] 5. **Data Integration Layer**
+- [x] Connect project with live datasets or APIs for dynamic updates.
+- [x] Line 396 `main.py`, comments on top of `mapillary_client.py`, `gbif_client.py`, `open_meteo_client.py`
 
-- `App.js`: Dashboard analytics, notifications, or role-based access updates (Lines 7, 99, 112, 161).
+————————————————————————————————————
 
-### Backend & API Enhancements (Verified from Source)
+- [x] 6. **Performance Optimization**
+- [x] Improve speed and efficiency of algorithms and backend processes.
+- [x] Line 10, 397 `main.py`
 
-**4. Basic Testing Suite**
+————————————————————————————————————
 
-- File: `test-core.py`
-- Implementation: A separate testing suite was added spanning lines 1–42 to validate core external service connectivity.
-- Details: Includes `test_gbif_ping` (Lines 11–17), `test_open_meteo_ping` (Lines 18–26), and `test_ollama_ping` (Lines 27–40) to prevent regressions.
+- [x] 7. **Feature Expansion**
+- [x] Add one mid‑level feature (e.g., dashboard analytics, notifications, or role-based access).
+- [x] `App.js`
+- [x] We already had dashboard analytics
+- [x] Line 7 — import of notification/PDF/share libs
+- [x] Line 99 — notification config + permission effect
+- [x] Line 112 — matched-allergy push notification effect
+- [x] Line 161 — `shareScanPdf` PDF export/share function
 
-**5. Data Integration Layer**
+————————————————————————————————————
 
-- File: `main.py`
-- Implementation: Connects the project with live datasets for dynamic updates.
-- Details: The API clients are imported at lines 23–25. The core data integration logic is verified at line 396, which explicitly connects the project with live datasets for GBIF, Open-Meteo, and Mapillary to ensure real-time environmental data.
+- [x] 8. **AI/ML Enhancement**
+- [x] Integrate advanced AI models for intelligent automation or predictions.
+- [x] Line 33 `main.py`
 
-**6. Performance Optimization**
+————————————————————————————————————
 
-- File: `main.py`
-- Implementation: Improved speed and algorithm efficiency using concurrent execution.
-- Details: The `ThreadPoolExecutor` is imported at lines 10–11. The actual optimization occurs at lines 397–411, replacing sequential API calls with concurrent background threads to reduce overall latency.
+- [x] 9. **Scalability & Deployment**
+- [x] Prepare the system for large‑scale use with cloud deployment and load balancing.
+- [x] main.py Line number 77
+- [x] `Dockerfile` added to the project to support containerized deployment
 
-**8. AI/ML Enhancement**
+————————————————————————————————————
 
-- File: `main.py`
-- Implementation: Integrated advanced AI models for predictions and automation.
-- Details: Verified at lines 33–36, defining the `VISION_MODEL` (`qwen2.5vl:7b`) for street-level vision analysis and the `REASON_MODEL` (`gemma4:e4b`) for text reasoning.
-
-**9. Scalability & Deployment**
-
-- File: `main.py`
-- Implementation: Prepared the system for large-scale use and load balancing.
-- Details: Implemented at lines 77–84 with a dedicated, unauthenticated `/health` endpoint that returns a `200 OK` status, allowing load balancers (like NGINX or Kubernetes) to route traffic effectively for horizontal auto-scaling.
-- Additionally, a `Dockerfile` has been added to the project to support containerized deployment.
-
-**10. Security & Compliance**
-
-- File: `main.py`
-- Implementation: Advanced security protocols and strict compliance checks.
-- Details: Lines 58–63 restrict CORS to an `ALLOWED_ORIGINS` environment variable to prevent unauthorized cross-origin requests. Lines 65–75 implement an `@app.after_request` hook to inject critical security headers, including preventing MIME-type sniffing, blocking clickjacking, and enforcing strict HTTPS.
+- [x] 10. **Security & Compliance**
+- [x] Implement advanced security protocols, encryption, and compliance checks.
+- [x] main.py line number 58,65
